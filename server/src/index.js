@@ -10,6 +10,7 @@ const loggerAcademico = (req, res, next) => {
 
   res.on("finish", () => {
     const duracion = Date.now() - inicio;
+
     console.log(
       `[${req.method}] ${req.originalUrl} - Estado: ${res.statusCode} (${duracion}ms)`
     );
@@ -18,7 +19,14 @@ const loggerAcademico = (req, res, next) => {
   next();
 };
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type"],
+  })
+);
+
 app.use(express.json());
 app.use(loggerAcademico);
 
@@ -30,11 +38,16 @@ app.use("/api/v1/movies", movieRoutes);
 
 app.use((err, req, res, next) => {
   if (err.message === "NOT_FOUND") {
-    return res.status(404).json({ error: "Película no encontrada." });
+    return res.status(404).json({
+      error: "Película no encontrada.",
+    });
   }
 
   console.error("ERROR GLOBAL:", err);
-  return res.status(500).json({ error: "Error interno del servidor." });
+
+  return res.status(500).json({
+    error: "Error interno del servidor.",
+  });
 });
 
 if (process.env.NODE_ENV !== "production") {
