@@ -23,7 +23,7 @@ app.use(express.json());
 app.use(loggerAcademico);
 
 app.get("/", (req, res) => {
-  res.json({ message: "Servidor Cinelog funcionando correctamente" });
+  res.json({ message: "Servidor CineLog funcionando correctamente" });
 });
 
 app.use("/api/v1/movies", movieRoutes);
@@ -37,6 +37,10 @@ app.use((err, req, res, next) => {
   return res.status(500).json({ error: "Error interno del servidor." });
 });
 
-app.listen(port, () => {
-  console.log(`Servidor corriendo en http://localhost:${port}`);
-});
+if (process.env.NODE_ENV !== "production") {
+  app.listen(port, () => {
+    console.log(`Servidor corriendo en http://localhost:${port}`);
+  });
+}
+
+module.exports = app;
