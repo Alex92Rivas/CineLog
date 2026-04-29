@@ -1,6 +1,10 @@
 import type { Movie } from "../types/movie";
 
-const API_URL = "http://localhost:3000/api/v1/movies";
+const API_URL = import.meta.env.VITE_API_URL;
+
+if (!API_URL) {
+  throw new Error("Falta definir VITE_API_URL");
+}
 
 export async function getMovies(): Promise<Movie[]> {
   const response = await fetch(API_URL);
@@ -22,9 +26,7 @@ export async function getMovieById(id: string): Promise<Movie> {
   return response.json();
 }
 
-export async function createMovie(
-  movie: Omit<Movie, "id">
-): Promise<Movie> {
+export async function createMovie(movie: Omit<Movie, "id">): Promise<Movie> {
   const response = await fetch(API_URL, {
     method: "POST",
     headers: {
@@ -34,6 +36,8 @@ export async function createMovie(
   });
 
   if (!response.ok) {
+    const errorText = await response.text();
+    console.error("Error al crear película:", errorText);
     throw new Error("Error al crear película");
   }
 
