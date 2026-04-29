@@ -1,11 +1,5 @@
-import CollectionView from "./pages/CollectionView";
+import AppRouter from "./router/AppRouter";
 
-function App() {
-  return (
-    <div className="min-h-screen bg-black text-white">
-      <CollectionView />
-    </div>
-  );
+export default function App() {
+  return <AppRouter />;
 }
-
-export default App;
