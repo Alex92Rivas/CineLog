@@ -7,10 +7,18 @@ export function useMovieFilters(movies: Movie[]) {
   const [favoritesOnly, setFavoritesOnly] = useState(false);
 
   const filteredMovies = useMemo(() => {
+    const normalizedSearch = searchTerm.trim().toLowerCase();
+
     return movies.filter((movie) => {
+      const title = movie.title.toLowerCase();
+      const originalTitle = movie.originalTitle?.toLowerCase() ?? "";
+      const genres = movie.genres?.join(" ").toLowerCase() ?? "";
+
       const matchesSearch =
-        movie.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        movie.originalTitle?.toLowerCase().includes(searchTerm.toLowerCase());
+        normalizedSearch === "" ||
+        title.includes(normalizedSearch) ||
+        originalTitle.includes(normalizedSearch) ||
+        genres.includes(normalizedSearch);
 
       const matchesStatus =
         statusFilter === "all" || movie.status === statusFilter;
@@ -21,6 +29,12 @@ export function useMovieFilters(movies: Movie[]) {
     });
   }, [movies, searchTerm, statusFilter, favoritesOnly]);
 
+  function resetFilters() {
+    setSearchTerm("");
+    setStatusFilter("all");
+    setFavoritesOnly(false);
+  }
+
   return {
     searchTerm,
     setSearchTerm,
@@ -29,5 +43,6 @@ export function useMovieFilters(movies: Movie[]) {
     favoritesOnly,
     setFavoritesOnly,
     filteredMovies,
+    resetFilters,
   };
 }
